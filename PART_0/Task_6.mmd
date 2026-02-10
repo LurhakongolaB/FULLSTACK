@@ -1,0 +1,15 @@
+sequenceDiagram
+
+box grey USER CREATES NOTE USING THE SINGLE-PAGE APP
+    participant browser
+    participant server
+    end
+
+    Note right of browser: User types a new note in the text field
+
+    browser->>server: POST https://studies.cs.helsinki.fi/exampleapp/api/notes
+    activate server
+    server-->>browser: JSON confirmation (new note saved)
+    deactivate server
+
+    Note right of browser: Browser updates the DOM to display the new note dynamically without reloading the page

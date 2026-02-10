@@ -1,0 +1,26 @@
+sequenceDiagram
+  box green USER GOES TO THE SINGLE-PAGE APP
+    participant Browser
+    participant Server
+    end
+
+    Browser->>Server: GET https://studies.cs.helsinki.fi/exampleapp/spa
+    activate Server
+    Server-->>Browser: Single HTML page + JS + CSS
+    deactivate Server
+
+    Note right of Browser: Browser executes the JavaScript code of the SPA
+
+    Browser->>Server: GET https://studies.cs.helsinki.fi/exampleapp/api/notes
+    activate Server
+    Server-->>Browser: [{ "content": "HTML is easy", "date": "2023-1-1" }, ... ]
+    deactivate Server
+
+    Note right of Browser: Browser renders the existing notes dynamically
+
+    Browser->>Server: POST https://studies.cs.helsinki.fi/exampleapp/api/notes
+    activate Server
+    Server-->>Browser: JSON confirmation (new note saved)
+    deactivate Server
+
+    Note right of Browser: Browser updates the DOM to display the new note without reloading the page
