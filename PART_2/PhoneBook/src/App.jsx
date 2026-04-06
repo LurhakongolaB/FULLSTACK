@@ -10,6 +10,14 @@ const App = () => {
     event.preventDefault()
     console.log('Form submitted. Current newName state:', newName)
 
+    const nameExists = persons.some(person=>person.name === newName)
+
+    if (nameExists){
+      console.log('Does name exist?', nameExists)
+      alert(`${newName} is already added to Phonebook` )
+      return
+    }
+
     const nameObject = {
       name: newName
     }
@@ -23,6 +31,7 @@ const App = () => {
     console.log('Input value changing to:', event.target.value)
     setNewName(event.target.value)
   }
+
   return (
     <div>
       <h2>Phonebook</h2>
