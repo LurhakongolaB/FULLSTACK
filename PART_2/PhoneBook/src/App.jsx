@@ -1,13 +1,11 @@
 import { useState, useEffect } from 'react'
 import axios from 'axios'
 
-
 const Filter = ({ value, onChange }) => (
   <div>
     filter shown with <input value={value} onChange={onChange} />
   </div>
 )
-
 
 const PersonForm = (props) => (
   <form onSubmit={props.addPerson}>
@@ -50,13 +48,17 @@ const App = () => {
 
     const nameObject = {
       name: newName,
-      number: newNumber,
-      id: String(persons.length + 1)
+      number: newNumber
     }
 
-    setPersons(persons.concat(nameObject))
-    setNewName('')
-    setNewNumber('')
+    axios
+      .post('http://localhost:3001/persons', nameObject)
+      .then(response => {
+        console.log('POST request successful:', response.data)
+        setPersons(persons.concat(response.data))
+        setNewName('')
+        setNewNumber('')
+      })
   }
 
   const handleNameChange = (e) => setNewName(e.target.value)
