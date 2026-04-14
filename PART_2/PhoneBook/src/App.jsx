@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import axios from 'axios'
+import personService from './services/persons' // Import the service
 
 const Filter = ({ value, onChange }) => (
   <div>
@@ -30,12 +30,12 @@ const App = () => {
   const [filterName, setFilterName] = useState('')
 
   useEffect(() => {
-    console.log('Effect: Sending Axios request to port 3001')
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => {
-        console.log('Promise fulfilled: Data is here!')
-        setPersons(response.data)
+    console.log('Effect: Fetching initial data')
+    personService
+      .getAll()
+      .then(initialPersons => {
+        console.log('Data fetched successfully')
+        setPersons(initialPersons)
       })
   }, []) 
 
@@ -51,11 +51,11 @@ const App = () => {
       number: newNumber
     }
 
-    axios
-      .post('http://localhost:3001/persons', nameObject)
-      .then(response => {
-        console.log('POST request successful:', response.data)
-        setPersons(persons.concat(response.data))
+    personService
+      .create(nameObject)
+      .then(returnedPerson => {
+        console.log('New person added to server')
+        setPersons(persons.concat(returnedPerson))
         setNewName('')
         setNewNumber('')
       })
