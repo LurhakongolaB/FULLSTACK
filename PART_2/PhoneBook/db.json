@@ -1,19 +1,14 @@
 {
   "persons": [
     {
-      "name": "Ada Lovelace",
-      "number": "39-44-5323523",
-      "id": "2"
-    },
-    {
-      "name": "Dan Abramov",
-      "number": "12-43-234345",
-      "id": "3"
-    },
-    {
       "name": "Alfred Balazire",
       "number": "09272825252",
       "id": "ekpOYjF"
+    },
+    {
+      "name": "vaba",
+      "number": "008832222",
+      "id": "0CtKxMA"
     }
   ]
 }
