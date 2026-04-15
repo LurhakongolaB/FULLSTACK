@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import Notification from './component/Notification'
 import personService from './services/persons'
 
 const Filter = ({ value, onChange }) => (
@@ -31,6 +32,7 @@ const App = () => {
   const [newName, setNewName] = useState('')
   const [newNumber, setNewNumber] = useState('')
   const [filterName, setFilterName] = useState('')
+  const [errorMessage, setErrorMessage]= useState(null)
 
   useEffect(() => {
     personService
@@ -63,6 +65,8 @@ const App = () => {
             ))
             setNewName('')
             setNewNumber('')
+            setErrorMessage(`Updated ${returnedPerson.name}`)
+            setTimeout(() => setErrorMessage(null), 5000)
           })
       }
       return
@@ -77,6 +81,8 @@ const App = () => {
         setPersons(persons.concat(returnedPerson))
         setNewName('')
         setNewNumber('')
+        setErrorMessage(`Added ${returnedPerson.name}`)
+        setTimeout(() => setErrorMessage(null), 5000)
       })
   }
 
@@ -86,9 +92,13 @@ const App = () => {
         .remove(id)
         .then(() => {
           console.log(`Deleted person with id ${id}`)
+
           setPersons(persons.filter(p => p.id !== id))
+          setErrorMessage(`Deleted ${name}`)
+        setTimeout(() => setErrorMessage(null), 5000)
         })
     }
+ 
   }
 
   const handleNameChange = (e) => setNewName(e.target.value)
@@ -103,6 +113,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+       <Notification message={errorMessage}/>
       <Filter value={filterName} onChange={(e) => setFilterName(e.target.value)} />
       
       <h3>Add a new</h3>
@@ -115,9 +126,10 @@ const App = () => {
       />
 
       <h3>Numbers</h3>
+     
       <Persons personsToShow={personsToShow} deletePerson={deletePerson} />
     </div>
   )
 }
 
-export default App
+export default App;
