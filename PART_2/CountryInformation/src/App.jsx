@@ -9,6 +9,7 @@ const App = () => {
   setQuery(countryName)
 }
 
+
   useEffect(() => {
     console.log('Fetching all countries...')
     axios
@@ -43,7 +44,7 @@ const App = () => {
     </div>
   ))
 )}
-        {countriesToShow.length === 1 && (
+   {countriesToShow.length === 1 && (
           <CountryDetail country={countriesToShow[0]} />
         )}
       </div>
@@ -52,25 +53,43 @@ const App = () => {
 }
 
 const CountryDetail = ({ country }) => {
-  console.log('Rendering details for:', country.name.common)
-  
+  const [weather, setWeather] = useState(null)
+  const api_key = import.meta.env.VITE_SOME_KEY
+
+  console.log('Is the key loaded?', api_key)
+  const capital = country.capital[0]
+
+  useEffect(() => {
+    axios
+      .get(`https://api.openweathermap.org/data/2.5/weather?q=${capital}&units=metric&appid=${api_key}`)
+      .then(response => {
+        setWeather(response.data)
+      })
+  }, [capital, api_key]) 
+
   return (
     <div>
       <h1>{country.name.common}</h1>
-      <p>capital {country.capital[0]}</p>
+      <p>capital {capital}</p>
       <p>area {country.area}</p>
 
       <h3>Languages</h3>
       <ul>
-        {Object.values(country.languages).map(lang => (
-          <li key={lang}>{lang}</li>
-        ))}
+        {Object.values(country.languages).map(lang => <li key={lang}>{lang}</li>)}
       </ul>
-      <img 
-        src={country.flags.png} 
-        alt={country.name.common} 
-        width="150" 
-      />
+      <img src={country.flags.png} alt={country.name.common} width="150" />
+
+      {weather && (
+        <div>
+          <h2>Weather in {capital}</h2>
+          <p>temperature {weather.main.temp} Celsius</p>
+          <img 
+            src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`} 
+            alt="weather icon" 
+          />
+          <p>wind {weather.wind.speed} m/s</p>
+        </div>
+      )}
     </div>
   )
 }
