@@ -5,6 +5,10 @@ const App = () => {
   const [query, setQuery] = useState('')
   const [allCountries, setAllCountries] = useState([])
 
+  const handleShowButtonClick = (countryName) => {
+  setQuery(countryName)
+}
+
   useEffect(() => {
     console.log('Fetching all countries...')
     axios
@@ -14,7 +18,6 @@ const App = () => {
         setAllCountries(response.data)
       })
   }, [])
-
   const countriesToShow = allCountries.filter(c => 
     c.name.common.toLowerCase().includes(query.toLowerCase())
   )
@@ -31,9 +34,15 @@ const App = () => {
         )}
 
         {countriesToShow.length <= 10 && countriesToShow.length > 1 && (
-          countriesToShow.map(c => <div key={c.name.common}>{c.name.common}</div>)
-        )}
-
+  countriesToShow.map(c => (
+    <div key={c.name.common}>
+      {c.name.common} 
+      <button onClick={() => handleShowButtonClick(c.name.common)}>
+        show
+      </button>
+    </div>
+  ))
+)}
         {countriesToShow.length === 1 && (
           <CountryDetail country={countriesToShow[0]} />
         )}
