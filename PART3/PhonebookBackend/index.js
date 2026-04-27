@@ -65,15 +65,21 @@ app.delete('/api/persons/:id', (request, response) => {
 app.post('/api/persons', (request, response) => {
   const body = request.body
 
-  // Check if the content is missing (optional for now, but good practice)
   if (!body.name || !body.number) {
     return response.status(400).json({ 
-      error: 'content missing' 
+      error: 'name or number missing' 
+    })
+  }
+
+  const nameExists = persons.find(p => p.name === body.name)
+  if (nameExists) {
+    return response.status(400).json({ 
+      error: 'name must be unique' 
     })
   }
 
   const person = {
-    id: Math.floor(Math.random() * 100000).toString(), // Large range for ID
+    id: Math.floor(Math.random() * 100000).toString(), 
     name: body.name,
     number: body.number,
   }
