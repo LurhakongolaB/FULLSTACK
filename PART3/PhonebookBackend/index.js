@@ -27,11 +27,21 @@ let persons = [
       "id": "5",
       "name": "Marian", 
       "number": "39-21-6423127"
-    }
+    },
+
 ]
 
 app.get('/api/persons', (request, response) => {
   response.json(persons)
+})
+
+app.get('/info', (req, res) =>{
+    const entries = persons.length
+    const date = new Date()
+
+    res.send(` <p>Phonebood has infor for ${entries}</p>  <p>${date}</p>
+        `)
+   
 })
 
 const PORT = 3001
