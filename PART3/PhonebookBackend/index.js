@@ -31,8 +31,8 @@ let persons = [
 
 ]
 
-app.get('/api/persons', (request, response) => {
-  response.json(persons)
+app.get('/api/persons', (re, res) => {
+  res.json(persons)
 })
 
 app.get('/info', (req, res) =>{
@@ -41,9 +41,16 @@ app.get('/info', (req, res) =>{
 
     res.send(` <p>Phonebood has infor for ${entries}</p>  <p>${date}</p>
         `)
-   
+
 })
 
+app.get('/api/persons/:id', (req, res) =>{
+    const id =req.params.id    
+    const person = persons.find(person => person.id === id)
+    if(person) {
+        res.json(person)
+    } else {res.status(404).end()}
+})
 const PORT = 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
