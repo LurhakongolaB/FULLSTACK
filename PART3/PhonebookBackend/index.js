@@ -1,5 +1,6 @@
 const express = require('express')
 const app = express()
+app.use(express.json())
 
 let persons = [
     {
@@ -61,6 +62,26 @@ app.delete('/api/persons/:id', (request, response) => {
 }) 
 
 
+app.post('/api/persons', (request, response) => {
+  const body = request.body
+
+  // Check if the content is missing (optional for now, but good practice)
+  if (!body.name || !body.number) {
+    return response.status(400).json({ 
+      error: 'content missing' 
+    })
+  }
+
+  const person = {
+    id: Math.floor(Math.random() * 100000).toString(), // Large range for ID
+    name: body.name,
+    number: body.number,
+  }
+
+  persons = persons.concat(person)
+
+  response.json(person)
+})
 const PORT = 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
