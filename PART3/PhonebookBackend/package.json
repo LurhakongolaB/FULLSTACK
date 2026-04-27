@@ -1,0 +1,24 @@
+{
+  "name": "phonebookbackend",
+  "version": "1.0.0",
+  "description": "Simple REST API for a phonebook",
+  "main": "index.js",
+  "scripts": {
+    "dev": "nodemon index.js",
+    "start": "node index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "node",
+    "express",
+    "phonebook"
+  ],
+  "author": "Lurhakongola",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}
