@@ -11,7 +11,7 @@ const CountryList = ({ countries, setQuery }) => {
         {countries.map(c => (
           <div key={c.name.common}>
             {c.name.common} 
-            <button onClick={() => setQuery(c.name.common)}>show</button>
+            <button  onClick={() => setQuery(c.name.common)}>show</button>
           </div>
         ))}
       </div>

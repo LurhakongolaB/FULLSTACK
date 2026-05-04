@@ -3,7 +3,7 @@ import axios from 'axios'
 
 const Weather = ({ capital }) => {
   const [weather, setWeather] = useState(null)
-  const api_key = import.meta.env.VITE_SOME_KEY
+  const api_key = import.meta.env.VITE_WEATHER_KEY
 
   useEffect(() => {
     axios

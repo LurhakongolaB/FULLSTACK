@@ -1,0 +1,18 @@
+.find {
+    color: blue;
+    font-size: medium;
+    font-weight: 200;
+}
+.btn{
+    padding: 10px;
+    border-radius: 5px;
+    border-color: rgb(242, 0, 255);
+}
+.hold{
+    padding: 40px 10px 40px;
+    border-radius: 5px;
+    background-color: coral;
+    width: 15%;
+
+
+}

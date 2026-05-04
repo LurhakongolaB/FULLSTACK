@@ -18,10 +18,11 @@ const App = () => {
 
   return (
     <div>
-      find countries <input value={query} onChange={(e) => setQuery(e.target.value)} />
+      <p className='find'>Find countries <div className='hold'><input className="btn" 
+      value={query} onChange={(e) => setQuery(e.target.value)} placeholder='Tye Country' /></div></p>
       <CountryList countries={countriesToShow} setQuery={setQuery} />
     </div>
   )
 }
-
+ 
 export default App
