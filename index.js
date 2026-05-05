@@ -105,7 +105,7 @@ app.post('/api/persons', (request, response) => {
 
   response.json(person)
 })
-// index.js
+// Port that the server will listen on, either from environment variable or default to 3001
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
