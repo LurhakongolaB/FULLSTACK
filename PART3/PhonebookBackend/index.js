@@ -1,14 +1,11 @@
 const express = require('express')
 const morgan = require('morgan')
-const cors = require('cors')
 const path = require('path')
 
 const app = express()
 
-// Middleware
-app.use(cors())
 app.use(express.json())
-app.use(express.static('dist')) // 👈 serve frontend
+app.use(express.static(path.join(__dirname, 'dist')))
 
 // Morgan logging (with request body)
 morgan.token('body', (req) => JSON.stringify(req.body))
@@ -24,9 +21,7 @@ let persons = [
   { id: "6", name: "Zaina", number: "39-21-6423127" }
 ]
 
-// API routes
 
-// Get all persons
 app.get('/api/persons', (req, res) => {
   res.json(persons)
 })
@@ -76,10 +71,6 @@ app.post('/api/persons', (req, res) => {
 })
 
 
-// 👇 IMPORTANT: fallback for React (Express 5 safe)
-app.use((req, res) => {
-  res.sendFile(path.resolve(__dirname, 'dist', 'index.html'))
-})
 
 // Start server
 const PORT = process.env.PORT || 3001
