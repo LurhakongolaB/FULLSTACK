@@ -52,10 +52,16 @@ let persons = [
 
 app.get ('/', (req,res)=> {
   res.json(persons)
-})
+});
+
+// app.get('*', (req, res) => {
+//   res.sendFile(path.resolve(__dirname, 'dist', 'index.html'));
+// });
+
 app.get('/api/persons', (req, res) => {
-  res.json(persons)
-})
+  res.json(persons);
+});
+
 
 app.get('/info', (req, res) =>{
     const entries = persons.length
@@ -64,7 +70,8 @@ app.get('/info', (req, res) =>{
     res.send(` <p>Phonebood has infor for ${entries}</p>  <p>${date}</p>
         `)
 
-})
+});
+
 
 app.get('/api/persons/:id', (req, res) =>{
     const id =req.params.id    
