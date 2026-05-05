@@ -109,7 +109,7 @@ app.post('/api/persons', (request, response) => {
 
   response.json(person)
 })
-// Port that the server will listen on, either from environment variable or default to 3001
+// Connected the Backend to the Frontend
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
