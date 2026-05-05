@@ -1,124 +1,88 @@
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
+const path = require('path')
+
 const app = express()
 
+// Middleware
+app.use(cors())
 app.use(express.json())
-app.use(express.static('dist'))
+app.use(express.static('dist')) // 👈 serve frontend
 
-/
-morgan.token('body', (req, res) => {
-  return JSON.stringify(req.body)
-})
-
+// Morgan logging (with request body)
+morgan.token('body', (req) => JSON.stringify(req.body))
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
-
+// In-memory data
 let persons = [
-    {
-        "id": "1",
-        "name": "Saima Hellas",
-        "number": "040-123456"
-    },
-
-    { 
-      "id": "2",
-      "name": "Ada Lovelace", 
-      "number": "39-44-5323523"
-    },
-    { 
-      "id": "3",
-      "name": "Dan Abramov", 
-      "number": "12-43-234345"
-    },
-    { 
-      "id": "4",
-      "name": "Mary Poppendieck", 
-      "number": "39-23-6423122"
-    },
-    { 
-      "id": "5",
-      "name": "Marian", 
-      "number": "39-21-6423127"
-    },
-    { 
-      "id": "6",
-      "name": "Zaina", 
-      "number": "39-21-6423127"
-    }
-
+  { id: "1", name: "Saima Hellas", number: "040-123456" },
+  { id: "2", name: "Ada Lovelace", number: "39-44-5323523" },
+  { id: "3", name: "Dan Abramov", number: "12-43-234345" },
+  { id: "4", name: "Mary Poppendieck", number: "39-23-6423122" },
+  { id: "5", name: "Marian", number: "39-21-6423127" },
+  { id: "6", name: "Zaina", number: "39-21-6423127" }
 ]
 
-// 
-app.get ('/', (req,res)=> {
-  res.json(persons)
-});
+// API routes
 
-// app.get('*', (req, res) => {
-//   res.sendFile(path.resolve(__dirname, 'dist', 'index.html'));
-// });
-
+// Get all persons
 app.get('/api/persons', (req, res) => {
-  res.json(persons);
-});
+  res.json(persons)
+})
 
+// Get one person
+app.get('/api/persons/:id', (req, res) => {
+  const person = persons.find(p => p.id === req.params.id)
+  if (person) res.json(person)
+  else res.status(404).end()
+})
 
-app.get('/info', (req, res) =>{
-    const entries = persons.length
-    const date = new Date()
+// Info route
+app.get('/info', (req, res) => {
+  const date = new Date()
+  res.send(`
+    <p>Phonebook has info for ${persons.length} people</p>
+    <p>${date}</p>
+  `)
+})
 
-    res.send(` <p>Phonebood has infor for ${entries}</p>  <p>${date}</p>
-        `)
+// Delete person
+app.delete('/api/persons/:id', (req, res) => {
+  persons = persons.filter(p => p.id !== req.params.id)
+  res.status(204).end()
+})
 
-});
+// Add person
+app.post('/api/persons', (req, res) => {
+  const { name, number } = req.body
 
+  if (!name || !number) {
+    return res.status(400).json({ error: 'name or number missing' })
+  }
 
-app.get('/api/persons/:id', (req, res) =>{
-    const id =req.params.id    
-    const person = persons.find(person => person.id === id)
-    if(person) {
-        res.json(person)
-    } else {res.status(404).end()}
+  if (persons.find(p => p.name === name)) {
+    return res.status(400).json({ error: 'name must be unique' })
+  }
+
+  const newPerson = {
+    id: Math.floor(Math.random() * 100000).toString(),
+    name,
+    number
+  }
+
+  persons = persons.concat(newPerson)
+  res.json(newPerson)
 })
 
 
-
-app.delete('/api/persons/:id', (request, response) => {
-  const id = request.params.id
-  persons = persons.filter(p => p.id !== id)
-  response.status(204).end()
-}) 
-
-// adding data to the site
-app.post('/api/persons', (request, response) => {
-  const body = request.body
-
-  if (!body.name || !body.number) {
-    return response.status(400).json({ 
-      error: 'name or number missing' 
-    })
-  }
-
-  const nameExists = persons.find(p => p.name === body.name)
-  if (nameExists) {
-    return response.status(400).json({ 
-      error: 'name must be unique' 
-    })
-  }
-
-  const person = {
-    id: Math.floor(Math.random() * 100000).toString(), 
-    name: body.name,
-    number: body.number,
-  }
-
-  persons = persons.concat(person)
-
-  response.json(person)
+// 👇 IMPORTANT: fallback for React (Express 5 safe)
+app.use((req, res) => {
+  res.sendFile(path.resolve(__dirname, 'dist', 'index.html'))
 })
-// Connected the Backend to the Frontend
+
+// Start server
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
-
