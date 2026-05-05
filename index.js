@@ -14,7 +14,7 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :b
 let persons = [
     {
         "id": "1",
-        "name": "Safi Hellas",
+        "name": "Saima Hellas",
         "number": "040-123456"
     },
 
@@ -38,6 +38,11 @@ let persons = [
       "name": "Marian", 
       "number": "39-21-6423127"
     },
+    { 
+      "id": "6",
+      "name": "Zaina", 
+      "number": "39-21-6423127"
+    }
 
 ]
 
@@ -100,7 +105,9 @@ app.post('/api/persons', (request, response) => {
 
   response.json(person)
 })
-const PORT = 3001
+// index.js
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
+
