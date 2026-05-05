@@ -1,35 +1,32 @@
 import axios from 'axios'
-const baseUrl = 'http:/api/persons'
+
+const baseUrl = '/api/persons'
 
 const getAll = () => {
-  const request = axios.get(baseUrl)
-  return request.then(response => {
+  return axios.get(baseUrl).then(res => {
     console.log('GET successful')
-    return response.data
+    return res.data
   })
 }
-// Creating a new person object and sending it to the server with POST request
+
 const create = newObject => {
-  const request = axios.post(baseUrl, newObject)
-  return request.then(response => {
+  return axios.post(baseUrl, newObject).then(res => {
     console.log('POST successful')
-    return response.data
+    return res.data
   })
 }
 
 const update = (id, newObject) => {
-  const request = axios.put(`${baseUrl}/${id}`, newObject)
-  return request.then(response => {
+  return axios.put(`${baseUrl}/${id}`, newObject).then(res => {
     console.log('PUT successful')
-    return response.data
+    return res.data
   })
 }
 
 const remove = id => {
-  const request = axios.delete(`${baseUrl}/${id}`)
-  return request.then(response => {
+  return axios.delete(`${baseUrl}/${id}`).then(res => {
     console.log('DELETE successful')
-    return response.data
+    return res.data
   })
 }
 
