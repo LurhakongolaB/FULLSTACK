@@ -8,7 +8,7 @@ const getAll = () => {
     return response.data
   })
 }
-
+// Creating a new person object and sending it to the server with POST request
 const create = newObject => {
   const request = axios.post(baseUrl, newObject)
   return request.then(response => {
