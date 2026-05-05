@@ -46,9 +46,10 @@ let persons = [
 
 ]
 
-app.get('/', (req, res) => {
-  res.send('<h1>Phonebook Backend is running!</h1>');
-});
+
+app.get ('/', (req,res)=> {
+  res.json(persons)
+})
 app.get('/api/persons', (req, res) => {
   res.json(persons)
 })
