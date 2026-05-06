@@ -1,19 +1,139 @@
-.success {
-  color: green;
-  background: lightgrey;
-  font-size: 20px;
-  border-style: solid;
-  border-radius: 5px;
-  padding: 10px;
-  margin-bottom: 10px;
+/* Container and Typography */
+.container {
+  max-width: 500px;
+  margin: 50px auto;
+  padding: 20px;
+  font-family: 'Inter', -apple-system, sans-serif;
+  background-color: #fcfcfd;
+  border-radius: 16px;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
 }
 
-.error {
-  color: red;
-  background: lightgrey;
-  font-size: 20px;
-  border-style: solid;
-  border-radius: 5px;
-  padding: 10px;
-  margin-bottom: 10px;
+.main-title {
+  color: #111827;
+  font-size: 2rem;
+  font-weight: 800;
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+/* Search and Inputs */
+.filter-section {
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.input-field {
+  padding: 10px 14px;
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  font-size: 1rem;
+  width: 100%;
+  transition: all 0.2s;
+}
+
+.input-field:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* The Card and Form */
+.card {
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid #e5e7eb;
+  margin-bottom: 30px;
+}
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #374151;
+}
+
+/* Buttons */
+.btn-add {
+  width: 100%;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-add:hover {
+  background-color: #1d4ed8;
+}
+
+.btn-delete {
+  background-color: #fee2e2;
+  color: #dc2626;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-delete:hover {
+  background-color: #fecaca;
+}
+
+/* The List */
+.person-list {
+  list-style: none;
+  padding: 0;
+}
+
+.person-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.person-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.person-name {
+  font-weight: 600;
+  color: #111827;
+}
+
+.person-number {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+.app-footer {
+  margin-top: 40px;
+  padding: 20px 0;
+  text-align: center;
+  border-top: 1px solid #e5e7eb;
+  color: #9ca3af;
+  font-size: 0.85rem;
+  font-style: italic;
+}
+
+.app-footer p {
+  margin: 0;
+  letter-spacing: 0.5px;
 }

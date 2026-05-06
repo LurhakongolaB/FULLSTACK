@@ -108,41 +108,75 @@ const App = () => {
       })
 
   console.log('Rendering component. Persons count:', personsToShow.length)
-
-  return (
-    <div>
-      <h2>Phonebook</h2>
+return (
+    <div className="container">
+      <h2 className="main-title">Phonebook</h2>
+      
       <Notification message={infoMessage} type={messageType} />
       
-      <div>
-        filter shown with 
+      <div className="filter-section">
+        <span>Search</span>
         <input 
+          className="input-field"
           value={filterName} 
-          onChange={(e) => {
-            console.log('Filter change:', e.target.value)
-            setFilterName(e.target.value)
-          }} 
+          onChange={(e) => setFilterName(e.target.value)} 
         />
       </div>
       
-      <h3>Add a new</h3>
-      <form onSubmit={addPerson}>
-        <div>name: <input value={newName} onChange={handleNameChange} /></div>
-        <div>number: <input value={newNumber} onChange={handleNumberChange} /></div>
-        <div><button type="submit">add</button></div>
-      </form>
+      <div className="card">
+        <h3>Add a new contact</h3>
+        <form onSubmit={addPerson} className="person-form">
+          <div className="form-group">
+            <label>Name</label>
+            <input 
+              className="input-field" 
+              value={newName} 
+              onChange={handleNameChange} 
+              placeholder="Alfred Blzr" 
+            />
+          </div>
+          <div className="form-group">
+            <label>Number</label>
+            <input 
+              className="input-field" 
+              value={newNumber} 
+              onChange={handleNumberChange} 
+              placeholder="040-123456" 
+            />
+          </div>
+          <button className="btn-add" type="submit">Add Contact</button>
+        </form>
+      </div>
 
-      <h3>Numbers</h3>
-      <ul>
-        {personsToShow.map(person => 
-          <li key={person.id}>
-            {person.name} {person.number} 
-            <button onClick={() => deletePerson(person.id, person.name)}>delete</button>
-          </li>
-        )}
-      </ul>
+      <div className="list-section">
+        <h3>Numbers</h3>
+        <ul className="person-list">
+          {personsToShow.map(person => 
+            <li key={person.id} className="person-item">
+              <div className="person-info">
+                <span className="person-name">{person.name}</span>
+                <span className="person-number">{person.number}</span>
+              </div>
+              <button className="btn-delete" onClick={() => deletePerson(person.id, person.name)}>
+                Delete
+              </button>
+            </li>
+          )}
+        </ul>
+      </div>
+
+      {/* ... existing list-section ... */}
+      <div className="list-section">
+        {/* ... your ul and mapping code ... */}
+      </div>
+
+      <footer className="app-footer">
+        <p>&copy; {new Date().getFullYear()} Mr Balzire. All rights reserved.</p>
+      </footer>
+
+
     </div>
   )
-}
+} 
 
 export default App
