@@ -41,23 +41,61 @@ app.delete('/api/persons/:id', (req, res) => {
   persons = persons.filter(p => p.id !== req.params.id)
   res.status(204).end()
 })
+// ######################################################################
 
-app.post('/api/persons', (req, res) => {
-  const { name, number } = req.body
-  if (!name || !number) {
-    return res.status(400).json({ error: 'name or number missing' })
+app.post('/api/persons', (request, response, next) => {
+  const body = request.body
+  
+  // Debugging line
+  console.log('DEBUG: Received body:', body)
+
+  if (!body.name || !body.number) {
+    return response.status(400).json({ 
+      error: 'name or number missing' 
+    })
   }
-  if (persons.find(p => p.name === name)) {
-    return res.status(400).json({ error: 'name must be unique' })
-  }
-  const newPerson = {
-    id: Math.floor(Math.random() * 100000).toString(),
-    name,
-    number
-  }
-  persons = persons.concat(newPerson)
-  res.json(newPerson)
+
+  const person = new Person({
+    name: body.name,
+    number: body.number,
+  })
+
+  person.save()
+    .then(savedPerson => {
+      response.json(savedPerson)
+    })
+    .catch(error => next(error))
 })
+
+
+
+
+
+
+
+
+
+
+
+
+
+// ##############################################################
+// app.post('/api/persons', (req, res) => {
+//   const { name, number } = req.body
+//   if (!name || !number) {
+//     return res.status(400).json({ error: 'name or number missing' })
+//   }
+//   if (persons.find(p => p.name === name)) {
+//     return res.status(400).json({ error: 'name must be unique' })
+//   }
+//   const newPerson = {
+//     id: Math.floor(Math.random() * 100000).toString(),
+//     name,
+//     number
+//   }
+//   persons = persons.concat(newPerson)
+//   res.json(newPerson)
+// })
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
