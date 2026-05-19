@@ -1,10 +1,10 @@
+require('dotenv').config()
 const express = require('express')
+const Person = require('./models/persons')
 const morgan = require('morgan')
 const path = require('path')
 const cors = require('cors') // 1. Added CORS
-
 const app = express()
-
 app.use(cors()) // 2. Enable CORS
 app.use(express.json())
 app.use(express.static(path.join(__dirname, 'dist')))
@@ -12,23 +12,22 @@ app.use(express.static(path.join(__dirname, 'dist')))
 morgan.token('body', (req) => JSON.stringify(req.body))
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
 
-let persons = [
-  { id: "1", name: "Saima Hellas", number: "040-123456" },
-  { id: "2", name: "Ada Lovelace", number: "39-44-5323523" },
-  { id: "3", name: "Dan Abramov", number: "12-43-234345" },
-  { id: "4", name: "Mary Poppendieck", number: "39-23-6423122" },
-  { id: "5", name: "Marian", number: "39-21-6423127" },
-  { id: "6", name: "Zaina", number: "39-21-6423127" }
-]
+const url = process.env.MONGODB_URI
+console.log('connecting to', url)
+if (!url) {
+  console.error('MONGODB_URI is not defined in environment variables')
+  process.exit(1)
+}
 
-// 3. Added a root route for Render health checks
-app.get('/', (req, res) => {
-  res.send('<h1>Phonebook Backend is Live</h1><p>Visit <a href="/api/persons">/api/persons</a></p>')
+app.get('/api/persons', async (req, res, next) => {
+  try {
+    const persons = await Person.find({})
+    res.json(persons)
+  } catch (error) {
+    next(error)
+  }
 })
 
-app.get('/api/persons', (req, res) => {
-  res.json(persons)
-})
 
 app.get('/api/persons/:id', (req, res) => {
   const person = persons.find(p => p.id === req.params.id)
@@ -36,13 +35,7 @@ app.get('/api/persons/:id', (req, res) => {
   else res.status(404).end()
 })
 
-app.get('/info', (req, res) => {
-  const date = new Date()
-  res.send(`
-    <p>Phonebook has info for ${persons.length} people</p>
-    <p>${date}</p>
-  `)
-})
+
 
 app.delete('/api/persons/:id', (req, res) => {
   persons = persons.filter(p => p.id !== req.params.id)
