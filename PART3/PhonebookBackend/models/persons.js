@@ -15,7 +15,10 @@ mongoose.connect(url, { family: 4 })
 
 // CORRECTED SCHEMA: Changed 'content' to 'name' and 'important' to 'number'
 const personSchema = new mongoose.Schema({
-  name: String,
+  name: {
+    type: String,
+    minlength: 3
+  },
   number: String,
 })
 
