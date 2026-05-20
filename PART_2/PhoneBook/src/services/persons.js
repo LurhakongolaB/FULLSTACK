@@ -16,8 +16,7 @@ const create = newObject => {
   })
 }
 
-con
-st update = (id, newObject) => {
+const update = (id, newObject) => {
   return axios.put(`${baseUrl}/${id}`, newObject).then(res => {
     console.log('PUT successful')
     return res.data

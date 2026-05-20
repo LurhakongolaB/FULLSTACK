@@ -63,7 +63,8 @@ const App = () => {
     const nameObject = { name: newName, number: newNumber }
     console.log('Creating new entry:', nameObject)
 
-    personService.create(nameObject).then(returnedPerson => {
+    personService.create(nameObject)
+    .then(returnedPerson => {
       console.log('Creation successful:', returnedPerson)
       setPersons(persons.concat(returnedPerson))
       
@@ -73,6 +74,12 @@ const App = () => {
       
       setNewName('')
       setNewNumber('')
+    }) 
+    .catch(error => {
+      console.error('Creation failed:', error.response.data)
+      setMessageType('error')
+      setInfoMessage(`Failed to add ${newName}. Please try again.`)
+      setTimeout(() => setInfoMessage(null), 5000)
     })
   }
 
