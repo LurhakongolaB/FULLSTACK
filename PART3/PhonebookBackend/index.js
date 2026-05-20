@@ -61,7 +61,7 @@ app.post('/api/persons', (request, response, next) => {
     })
     .catch(error => next(error))
 })
-
+// added put endpoint for updating person information
 app.put('/api/persones/:id', (request, response, next) => {
   const { name, number } = request.body
 
