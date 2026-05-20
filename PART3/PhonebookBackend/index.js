@@ -3,11 +3,15 @@ const express = require('express')
 const Person = require('./models/persons')
 const morgan = require('morgan')
 const path = require('path')
-const cors = require('cors') // 1. Added CORS
+const cors = require('cors')
+
 const app = express()
-app.use(cors()) // 2. Enable CORS
+
+app.use(cors())
 app.use(express.json())
+
 app.use(express.static(path.join(__dirname, 'dist')))
+
 
 morgan.token('body', (req) => JSON.stringify(req.body))
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
@@ -110,6 +114,10 @@ const unknownEndpoint = (request, response) => {
 }
 
 app.use(unknownEndpoint)
+
+app.get(/.*/, (req, res) => {
+  res.sendFile(path.resolve(__dirname, 'dist', 'index.html'))
+})
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
