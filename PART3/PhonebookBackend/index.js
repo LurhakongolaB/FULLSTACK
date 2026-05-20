@@ -9,9 +9,8 @@ const app = express()
 
 app.use(cors())
 app.use(express.json())
-app.use(express.static('dist'))
 
-// app.use(express.static(path.join(__dirname, 'dist')))
+app.use(express.static(path.join(__dirname, 'dist')))
 
 
 morgan.token('body', (req) => JSON.stringify(req.body))
@@ -45,19 +44,18 @@ app.get('/api/persons', async (req, res, next) => {
 
 app.post('/api/persons', (request, response, next) => {
   const body = request.body
-  
-  // Debugging line
+
   console.log('DEBUG: Received body:', body)
 
   if (!body.name || !body.number) {
-    return response.status(400).json({ 
-      error: 'name or number missing' 
+    return response.status(400).json({
+      error: 'name or number missing'
     })
   }
 
   const person = new Person({
     name: body.name,
-    number: body.number,
+    number: body.number
   })
 
   person.save()
@@ -88,7 +86,7 @@ app.put('/api/persones/:id', (request, response, next) => {
 
 app.delete('/api/persons/:id', (request, response, next) => {
   Person.findByIdAndDelete(request.params.id)
-    .then(result => {
+    .then(() => {
       response.status(204).end()
     })
     .catch(error => next(error))
