@@ -1,11 +1,14 @@
-GET http://localhost:3001/api/persons
-
-###
-
+### CREATE PERSON
 POST http://localhost:3001/api/persons
 Content-Type: application/json
 
 {
-  "name": "John Doe",
-  "number": "123-456-7890"
+  "name": "Fura",
+  "number": "123456"
 }
+
+### GET ALL PERSONS
+GET http://localhost:3001/api/persons
+
+### GET ONE PERSON (replace id after POST)
+GET http://localhost:3001/api/persons/6a0d8c3a0c7bad9d0a1791a9
