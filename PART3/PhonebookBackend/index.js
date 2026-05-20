@@ -19,6 +19,16 @@ if (!url) {
   process.exit(1)
 }
 
+const requestLogger = (req, res, next) => {
+  console.log('Method:', req.method)
+  console.log('Path:  ', req.path)
+  console.log('Body:  ', req.body)
+  console.log('---')
+  next()
+}
+
+app.use(requestLogger)
+
 app.get('/api/persons', async (req, res, next) => {
   try {
     const persons = await Person.find({})
@@ -27,25 +37,6 @@ app.get('/api/persons', async (req, res, next) => {
     next(error)
   }
 })
-
-
-app.get('/api/persons/:id', (req, res) => {
-  const person = persons.find(p => p.id === req.params.id)
-  if (person) res.json(person)
-  else res.status(404).end()
-})
-
-
-
-app.delete('/api/persons/:id', async (req, res, next) => {
-  try {
-    await Person.findByIdAndRemove(req.params.id)
-    res.status(204).end()
-  } catch (error) {
-    next(error)
-  }
-})
-// ######################################################################
 
 app.post('/api/persons', (request, response, next) => {
   const body = request.body
@@ -71,35 +62,51 @@ app.post('/api/persons', (request, response, next) => {
     .catch(error => next(error))
 })
 
+app.put('/api/persones/:id', (request, response, next) => {
+  const { name, number } = request.body
+
+  Person.findById(request.params.id)
+    .then(person => {
+      if (!person) {
+        return response.status(404).end()
+      }
+
+      person.name = name
+      person.number = number
+
+      return person.save().then((updatedPerson) => {
+        response.json(updatedPerson)
+      })
+    })
+    .catch(error => next(error))
+})
+
+app.delete('/api/persons/:id', (request, response, next) => {
+  Person.findByIdAndDelete(request.params.id)
+    .then(result => {
+      response.status(204).end()
+    })
+    .catch(error => next(error))
+})
 
 
+const errorHandler = (error, request, response, next) => {
+  console.error(error.message)
 
+  if (error.name === 'CastError') {
+    return response.status(400).send({ error: 'malformatted id' })
+  }
 
+  next(error)
+}
 
+app.use(errorHandler)
 
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: 'unknown endpoint' })
+}
 
-
-
-
-
-
-// ##############################################################
-// app.post('/api/persons', (req, res) => {
-//   const { name, number } = req.body
-//   if (!name || !number) {
-//     return res.status(400).json({ error: 'name or number missing' })
-//   }
-//   if (persons.find(p => p.name === name)) {
-//     return res.status(400).json({ error: 'name must be unique' })
-//   }
-//   const newPerson = {
-//     id: Math.floor(Math.random() * 100000).toString(),
-//     name,
-//     number
-//   }
-//   persons = persons.concat(newPerson)
-//   res.json(newPerson)
-// })
+app.use(unknownEndpoint)
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
