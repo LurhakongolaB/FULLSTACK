@@ -115,9 +115,11 @@ const unknownEndpoint = (request, response) => {
 
 app.use(unknownEndpoint)
 
-app.get(/.*/, (req, res) => {
-  res.sendFile(path.resolve(__dirname, 'dist', 'index.html'))
-})
+//  removed this
+
+// app.get(/.*/, (req, res) => {
+//   res.sendFile(path.resolve(__dirname, 'dist', 'index.html'))
+// })
 
 const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
