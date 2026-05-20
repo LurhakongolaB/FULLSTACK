@@ -37,9 +37,13 @@ app.get('/api/persons/:id', (req, res) => {
 
 
 
-app.delete('/api/persons/:id', (req, res) => {
-  persons = persons.filter(p => p.id !== req.params.id)
-  res.status(204).end()
+app.delete('/api/persons/:id', async (req, res, next) => {
+  try {
+    await Person.findByIdAndRemove(req.params.id)
+    res.status(204).end()
+  } catch (error) {
+    next(error)
+  }
 })
 // ######################################################################
 
