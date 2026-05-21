@@ -18,7 +18,7 @@ mongoose.connect(url)
     console.log('error connecting to MongoDB:', err.message)
   })
 
-// Blog schema
+// schema and model for blogs
 const blogSchema = new mongoose.Schema({
   title: String,
   author: String,
@@ -28,7 +28,7 @@ const blogSchema = new mongoose.Schema({
 
 const Blog = mongoose.model('Blog', blogSchema) 
 
-// 📥 GET all blogs
+// GET methot all blogs
 
 app.get('/api/blogs', (req, res) => {
   Blog.find({}).then(blogs => {
