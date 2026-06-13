@@ -152,3 +152,24 @@ test('deleting non-existing blog returns 404', async () => {
 after(async () => {
   await mongoose.connection.close()
 })
+
+test('likes of a blog can be updated', async () => {
+  const blogsAtStart = await api.get('/api/blogs')
+  const blogToUpdate = blogsAtStart.body[0]
+
+  const updatedBlog = {
+    likes: blogToUpdate.likes + 1
+  }
+
+  const response = await api
+    .put(`/api/blogs/${blogToUpdate.id}`)
+    .send(updatedBlog)
+    .expect(200)
+
+  assert.strictEqual(response.body.likes, blogToUpdate.likes + 1)
+
+  const blogsAtEnd = await api.get('/api/blogs')
+  const updated = blogsAtEnd.body.find(b => b.id === blogToUpdate.id)
+
+  assert.strictEqual(updated.likes, blogToUpdate.likes + 1)
+})
