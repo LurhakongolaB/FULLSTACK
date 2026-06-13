@@ -1,6 +1,7 @@
 const { test, after, beforeEach } = require('node:test')
 const assert = require('node:assert')
 const supertest = require('supertest')
+const mongoose = require('mongoose')
 
 const app = require('../app')
 const Blog = require('../models/blog')
@@ -22,13 +23,16 @@ const initialBlogs = [
   }
 ]
 
-const mongoose = require('mongoose')
-
+// RESET DATABASE BEFORE EACH TEST
 beforeEach(async () => {
   await Blog.deleteMany({})
 
-  await Blog.insertMany(initialBlogs)
+  const blogObjects = initialBlogs.map(blog => new Blog(blog))
+  const promiseArray = blogObjects.map(blog => blog.save())
+  await Promise.all(promiseArray)
 })
+
+// -------------------- GET TESTS --------------------
 
 test('blogs are returned as json', async () => {
   await api
@@ -40,14 +44,7 @@ test('blogs are returned as json', async () => {
 test('all blogs are returned', async () => {
   const response = await api.get('/api/blogs')
 
-  assert.strictEqual(
-    response.body.length,
-    initialBlogs.length
-  )
-})
-
-after(async () => {
-  await mongoose.connection.close()
+  assert.strictEqual(response.body.length, initialBlogs.length)
 })
 
 test('blogs have id field', async () => {
@@ -55,8 +52,11 @@ test('blogs have id field', async () => {
 
   response.body.forEach(blog => {
     assert.ok(blog.id)
+    assert.strictEqual(blog._id, undefined)
   })
-}) 
+})
+
+
 
 test('a valid blog can be added', async () => {
   const newBlog = {
@@ -65,6 +65,7 @@ test('a valid blog can be added', async () => {
     url: 'https://newtest.com',
     likes: 10
   }
+
   await api
     .post('/api/blogs')
     .send(newBlog)
@@ -72,7 +73,8 @@ test('a valid blog can be added', async () => {
     .expect('Content-Type', /application\/json/)
 
   const response = await api.get('/api/blogs')
-  const titles = response.body.map(blog => blog.title)
+
+  const titles = response.body.map(b => b.title)
   assert.ok(titles.includes(newBlog.title))
 })
 
@@ -117,4 +119,36 @@ test('blog without url is not added and returns 400', async () => {
     .post('/api/blogs')
     .send(newBlog)
     .expect(400)
+})
+
+
+test('a blog can be deleted', async () => {
+  const blogsAtStart = await api.get('/api/blogs')
+
+  const blogToDelete = blogsAtStart.body[0]
+
+  await api
+    .delete(`/api/blogs/${blogToDelete.id}`)
+    .expect(204)
+
+  const blogsAtEnd = await api.get('/api/blogs')
+
+  assert.strictEqual(
+    blogsAtEnd.body.length,
+    blogsAtStart.body.length - 1
+  )
+})
+
+test('deleting non-existing blog returns 404', async () => {
+  const fakeId = '507f1f77bcf86cd799439011'
+
+  await api
+    .delete(`/api/blogs/${fakeId}`)
+    .expect(404)
+})
+
+
+
+after(async () => {
+  await mongoose.connection.close()
 })
