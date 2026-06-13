@@ -75,3 +75,46 @@ test('a valid blog can be added', async () => {
   const titles = response.body.map(blog => blog.title)
   assert.ok(titles.includes(newBlog.title))
 })
+
+test('blog content is saved correctly', async () => {
+  const newBlog = {
+    title: 'Content test',
+    author: 'Tester',
+    url: 'https://test.com',
+    likes: 2
+  }
+
+  await api.post('/api/blogs').send(newBlog)
+
+  const response = await api.get('/api/blogs')
+
+  const titles = response.body.map(b => b.title)
+
+  assert.strictEqual(titles.includes('Content test'), true)
+})
+
+test('blog without title is not added and returns 400', async () => {
+  const newBlog = {
+    author: 'Tester',
+    url: 'https://test.com',
+    likes: 5
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+})
+
+test('blog without url is not added and returns 400', async () => {
+  const newBlog = {
+    title: 'Missing URL blog',
+    author: 'Tester',
+    likes: 5
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+})

@@ -31,4 +31,8 @@ app.use('/api/blogs', blogsRouter)
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)
 
+app.get('/', (req, res) => {
+  res.send('Blog API is running')
+})
+
 module.exports = app

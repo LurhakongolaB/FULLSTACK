@@ -7,10 +7,25 @@ blogsRouter.get('/', (req, res) => {
   })
 })
 
-blogsRouter.post('/',async (req, res) => {
-  const blog = new Blog(req.body)
+blogsRouter.post('/', async (req, res) => {
+  const blog = req.body
 
-  const savedBlog = await blog.save()
+  console.log('BODY:', blog)
+
+  if (!blog.title || !blog.url) {
+    return res.status(400).json({
+      error: 'title or url missing'
+    })
+  }
+
+  const newBlog = new Blog({
+    title: blog.title,
+    url: blog.url,
+    author: blog.author,
+    likes: blog.likes || 0
+  })
+
+  const savedBlog = await newBlog.save()
   res.status(201).json(savedBlog)
 })
 
