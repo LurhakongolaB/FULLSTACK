@@ -49,3 +49,11 @@ test('all blogs are returned', async () => {
 after(async () => {
   await mongoose.connection.close()
 })
+
+test('blogs have id field', async () => {
+  const response = await api.get('/api/blogs')
+
+  response.body.forEach(blog => {
+    assert.ok(blog.id)
+  })
+}) 
