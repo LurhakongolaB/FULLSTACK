@@ -57,3 +57,21 @@ test('blogs have id field', async () => {
     assert.ok(blog.id)
   })
 }) 
+
+test('a valid blog can be added', async () => {
+  const newBlog = {
+    title: 'New test blog',
+    author: 'Alfred',
+    url: 'https://newtest.com',
+    likes: 10
+  }
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(201)
+    .expect('Content-Type', /application\/json/)
+
+  const response = await api.get('/api/blogs')
+  const titles = response.body.map(blog => blog.title)
+  assert.ok(titles.includes(newBlog.title))
+})
