@@ -18,9 +18,9 @@ POST http://localhost:3001/api/users
 Content-Type: application/json
 
 {
-  "username": "Samira",
-  "name": "jeanne",
-  "password": "982626Reaea@#TUAK89"
+  "username": "estime",
+  "name": "Estime Balazire",
+  "password": "982626Reaea@#TUAKrat5"
 }
 
 ############3
@@ -29,32 +29,22 @@ POST http://localhost:3001/api/login
 Content-Type: application/json
 
 {
-  "username": "Samira",
-  "password": "982626Reaea@#TUAK89"
+  "username": "estime",
+  "password": "982626Reaea@#TUAKrat5"
 }
 
 #############
 
-POST http://localhost:3001/api/blogs
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImJhbGF6aXJlIiwiaWQiOiI2YTJmMTM3NDgxZjAwNDBiODdkNDIyNTEiLCJpYXQiOjE3ODE0NzAyNDcsImV4cCI6MTc4MTQ3Mzg0N30.j4B9_m8wneFQclL5bCRehTO0yKM-EaG6DsqWSrvCUS4
 
-{
-  "title": "Thank you for reading my first blog",
-  "author": "Alfred Balazire",
-  "url": "http://example.com/my-first-blog",
-  "likes": 0
-}
 
 #####
 
-Post http://localhost:3001/api/blogs
+POST http://localhost:3001/api/blogs
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6IlNhbWlyYSIsImlkIjoiNmEyZjE2YmQ4MWYwMDQwYjg3ZDQyMjU2IiwiaWF0IjoxNzgxNDcwOTMzLCJleHAiOjE3ODE0NzQ1MzN9.6__Zu3GBkV0npLVpiJ_t-xJce896P5mpnkuoo2ac4Zo
-
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImVzdGltZSIsImlkIjoiNmEyZjIzMWQ4NTBjYTM5YmZjMzFkYmE2IiwiaWF0IjoxNzgxNDc0MDkzLCJleHAiOjE3ODE0Nzc2OTN9.jjpXSLLjo9FOldT4F2wPxiE2ZxvQ-MilJrrdcedPqds
 {
   "title": "Thank you for reading my first blog",
-  "author": "Samira",
+  "author": "estime",
   "url": "http://example.com/my-one-blog",
   "likes": 0
 }
