@@ -1,39 +1,30 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
-const User = require('../models/user')
-const jwt = require('jsonwebtoken')
 
-// GET ALL BLOGS
+// GET ALL BLOGS (PUBLIC)
 blogsRouter.get('/', async (req, res) => {
-  const blogs = await Blog.find({})
+  const blogs = await Blog.find({}).populate('user', {
+    username: 1,
+    name: 1
+  })
+
   res.json(blogs)
 })
 
 
-// CREATE BLOG (JWT PROTECTED)
+// CREATE BLOG (AUTH REQUIRED)
 blogsRouter.post('/', async (req, res) => {
+  const user = req.user
   const body = req.body
 
-  // 1. verify token
-  const decodedToken = jwt.verify(req.token, process.env.SECRET)
-
-  if (!decodedToken || !decodedToken.id) {
+  if (!user) {
     return res.status(401).json({ error: 'token missing or invalid' })
   }
 
-  // 2. find user
-  const user = await User.findById(decodedToken.id)
-
-  if (!user) {
-    return res.status(401).json({ error: 'user not found' })
-  }
-
-  // 3. validate blog
   if (!body.title || !body.url) {
     return res.status(400).json({ error: 'title or url missing' })
   }
 
-  // 4. create blog
   const blog = new Blog({
     title: body.title,
     url: body.url,
@@ -44,7 +35,6 @@ blogsRouter.post('/', async (req, res) => {
 
   const savedBlog = await blog.save()
 
-  // 5. attach blog to user
   user.blogs = user.blogs.concat(savedBlog._id)
   await user.save()
 
@@ -52,16 +42,9 @@ blogsRouter.post('/', async (req, res) => {
 })
 
 
-// DELETE BLOG
-const jwt = require('jsonwebtoken')
-const Blog = require('../models/blog')
-
+// DELETE BLOG (OWNER ONLY)
 blogsRouter.delete('/:id', async (req, res) => {
-  const decodedToken = jwt.verify(req.token, process.env.SECRET)
-
-  if (!decodedToken || !decodedToken.id) {
-    return res.status(401).json({ error: 'token missing or invalid' })
-  }
+  const user = req.user
 
   const blog = await Blog.findById(req.params.id)
 
@@ -69,8 +52,11 @@ blogsRouter.delete('/:id', async (req, res) => {
     return res.status(404).json({ error: 'blog not found' })
   }
 
-  // 🔐 ownership check
-  if (blog.user.toString() !== decodedToken.id.toString()) {
+  if (!user) {
+    return res.status(401).json({ error: 'token missing or invalid' })
+  }
+
+  if (blog.user.toString() !== user._id.toString()) {
     return res.status(403).json({ error: 'not allowed to delete this blog' })
   }
 
@@ -78,6 +64,7 @@ blogsRouter.delete('/:id', async (req, res) => {
 
   res.status(204).end()
 })
+
 
 // UPDATE BLOG
 blogsRouter.put('/:id', async (req, res) => {

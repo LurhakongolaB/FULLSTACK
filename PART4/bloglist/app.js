@@ -29,9 +29,14 @@ app.use(express.static('dist'))
 app.use(middleware.requestLogger)
 
 // routes
-app.use('/api/blogs', blogsRouter)
+app.use('/api/blogs',
+  middleware.tokenExtractor, // tokenExtractor middleware is applied to /api/blogs route
+  middleware.userExtractor, // userExtractor middleware is applied to /api/blogs route
+  blogsRouter
+)
 app.use('/api/login', loginRouter)
 app.use('/api/users', usersRouter)
+app.use(middleware.tokenExtractor)
 
 // unknown endpoint + error handler
 app.use(middleware.unknownEndpoint)
