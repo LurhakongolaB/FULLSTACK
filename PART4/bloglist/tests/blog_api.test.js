@@ -1,121 +1,176 @@
-const { test, beforeEach, after } = require('node:test')
+process.env.NODE_ENV = 'test'
+const { test, after, beforeEach } = require('node:test')
 const assert = require('node:assert')
 const supertest = require('supertest')
 const mongoose = require('mongoose')
 
 const app = require('../app')
-const User = require('../models/user')
+const Blog = require('../models/blog')
 
 const api = supertest(app)
 
-// -------------------- TEST DATA --------------------
-
-const initialUsers = [
+const initialBlogs = [
   {
-    username: 'user1',
-    name: 'User One',
-    password: 'password1'
+    title: 'First blog',
+    author: 'Alfred',
+    url: 'https://first.com',
+    likes: 5
   },
   {
-    username: 'user2',
-    name: 'User Two',
-    password: 'password2'
+    title: 'Second blog',
+    author: 'John',
+    url: 'https://second.com',
+    likes: 7
   }
 ]
 
-// -------------------- RESET DB --------------------
-
+// RESET DATABASE BEFORE EACH TEST
 beforeEach(async () => {
-  await User.deleteMany({})
+  await Blog.deleteMany({})
 
-  const userObjects = initialUsers.map(u => new User(u))
-  const promises = userObjects.map(u => u.save())
-
-  await Promise.all(promises)
+  const blogObjects = initialBlogs.map(blog => new Blog(blog))
+  const promiseArray = blogObjects.map(blog => blog.save())
+  await Promise.all(promiseArray)
 })
 
-// -------------------- TESTS --------------------
+// -------------------- GET TESTS --------------------
 
-test('users are returned as json', async () => {
+test('blogs are returned as json', async () => {
   await api
-    .get('/api/users')
+    .get('/api/blogs')
     .expect(200)
     .expect('Content-Type', /application\/json/)
 })
 
-test('valid user can be created', async () => {
-  const newUser = {
-    username: 'validuser',
-    name: 'Valid User',
-    password: 'validpassword'
+test('all blogs are returned', async () => {
+  const response = await api.get('/api/blogs')
+
+  assert.strictEqual(response.body.length, initialBlogs.length)
+})
+
+test('blogs have id field', async () => {
+  const response = await api.get('/api/blogs')
+
+  response.body.forEach(blog => {
+    assert.ok(blog.id)
+    assert.strictEqual(blog._id, undefined)
+  })
+})
+
+
+
+test('a valid blog can be added', async () => {
+  const newBlog = {
+    title: 'New test blog',
+    author: 'Alfred',
+    url: 'https://newtest.com',
+    likes: 10
   }
 
-  const response = await api
-    .post('/api/users')
-    .send(newUser)
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
     .expect(201)
+    .expect('Content-Type', /application\/json/)
 
-  assert.strictEqual(response.body.username, newUser.username)
+  const response = await api.get('/api/blogs')
 
-  const usersAtEnd = await api.get('/api/users')
-  const usernames = usersAtEnd.body.map(u => u.username)
-
-  assert.ok(usernames.includes(newUser.username))
+  const titles = response.body.map(b => b.title)
+  assert.ok(titles.includes(newBlog.title))
 })
 
-test('duplicate username is rejected', async () => {
-  const newUser = {
-    username: 'user1',
-    name: 'Duplicate User',
-    password: 'duplicatepassword'
+test('blog content is saved correctly', async () => {
+  const newBlog = {
+    title: 'Content test',
+    author: 'Tester',
+    url: 'https://test.com',
+    likes: 2
   }
 
-  const result = await api
-    .post('/api/users')
-    .send(newUser)
-    .expect(400)
+  await api.post('/api/blogs').send(newBlog)
 
-  assert.ok(
-    result.body.error.includes('unique')
+  const response = await api.get('/api/blogs')
+
+  const titles = response.body.map(b => b.title)
+
+  assert.strictEqual(titles.includes('Content test'), true)
+})
+
+test('blog without title is not added and returns 400', async () => {
+  const newBlog = {
+    author: 'Tester',
+    url: 'https://test.com',
+    likes: 5
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+})
+
+test('blog without url is not added and returns 400', async () => {
+  const newBlog = {
+    title: 'Missing URL blog',
+    author: 'Tester',
+    likes: 5
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(400)
+})
+
+
+test('a blog can be deleted', async () => {
+  const blogsAtStart = await api.get('/api/blogs')
+
+  const blogToDelete = blogsAtStart.body[0]
+
+  await api
+    .delete(`/api/blogs/${blogToDelete.id}`)
+    .expect(204)
+
+  const blogsAtEnd = await api.get('/api/blogs')
+
+  assert.strictEqual(
+    blogsAtEnd.body.length,
+    blogsAtStart.body.length - 1
   )
 })
 
-test('password shorter than 3 characters is rejected', async () => {
-  const newUser = {
-    username: 'shortpassuser',
-    name: 'Short Password',
-    password: '12'
-  }
+test('deleting non-existing blog returns 404', async () => {
+  const fakeId = '507f1f77bcf86cd799439011'
 
-  const result = await api
-    .post('/api/users')
-    .send(newUser)
-    .expect(400)
-
-  assert.ok(
-    result.body.error.includes('password')
-  )
+  await api
+    .delete(`/api/blogs/${fakeId}`)
+    .expect(404)
 })
 
-test('username shorter than 3 characters is rejected', async () => {
-  const newUser = {
-    username: 'ab',
-    name: 'Too Short',
-    password: 'validpassword'
-  }
 
-  const result = await api
-    .post('/api/users')
-    .send(newUser)
-    .expect(400)
-
-  assert.ok(
-    result.body.error.includes('username')
-  )
-})
-
-// -------------------- CLEANUP --------------------
 
 after(async () => {
   await mongoose.connection.close()
+})
+
+test('likes of a blog can be updated', async () => {
+  const blogsAtStart = await api.get('/api/blogs')
+  const blogToUpdate = blogsAtStart.body[0]
+
+  const updatedBlog = {
+    likes: blogToUpdate.likes + 1
+  }
+
+  const response = await api
+    .put(`/api/blogs/${blogToUpdate.id}`)
+    .send(updatedBlog)
+    .expect(200)
+
+  assert.strictEqual(response.body.likes, blogToUpdate.likes + 1)
+
+  const blogsAtEnd = await api.get('/api/blogs')
+  const updated = blogsAtEnd.body.find(b => b.id === blogToUpdate.id)
+
+  assert.strictEqual(updated.likes, blogToUpdate.likes + 1)
 })
