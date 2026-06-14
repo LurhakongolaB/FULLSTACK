@@ -7,6 +7,9 @@
     "start": "NODE_ENV=production node index.js",
     "dev": "NODE_ENV=development node --watch index.js",
     "test": "NODE_ENV=test node --test",
+    "_alltest": "node --test --test-concurrency=1",
+    "test:users": "node --test tests/user_api.test.js",
+    "test:blogs": "node --test tests/blog_api.test.js",
     "lint": "eslint ."
   },
   "keywords": [],
