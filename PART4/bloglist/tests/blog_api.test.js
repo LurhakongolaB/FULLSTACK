@@ -5,9 +5,31 @@ const supertest = require('supertest')
 const mongoose = require('mongoose')
 
 const app = require('../app')
+const User = require('../models/user')
 const Blog = require('../models/blog')
 
 const api = supertest(app)
+
+let token = ''
+beforeEach(async () => {
+  await User.deleteMany({})
+  await Blog.deleteMany({})
+
+  const newUser = {
+    username: 'estime',
+    name: 'Estime Balazire',
+    password: '982626Reaea@#TUAKrat5'
+  }
+  await api
+  .post('/api/users')
+  .send({
+    username: 'root',
+    name: 'Superuser',
+    password: 'sekret'
+  })
+
+  token = logingResponse.body.token
+})
 
 const initialBlogs = [
   {
@@ -64,16 +86,17 @@ test('a valid blog can be added', async () => {
     title: 'New test blog',
     author: 'Alfred',
     url: 'https://newtest.com',
-    likes: 10
+    likes: 5
   }
 
   await api
     .post('/api/blogs')
+    .set('Authorization', `Bearer ${token}`)
     .send(newBlog)
     .expect(201)
-    .expect('Content-Type', /application\/json/)
+    assert.strictEqual(response.body, 'New test blog')  
 
-  const response = await api.get('/api/blogs')
+  const response = await api.get('/api/blogs', 1)
 
   const titles = response.body.map(b => b.title)
   assert.ok(titles.includes(newBlog.title))
@@ -173,4 +196,31 @@ test('likes of a blog can be updated', async () => {
   const updated = blogsAtEnd.body.find(b => b.id === blogToUpdate.id)
 
   assert.strictEqual(updated.likes, blogToUpdate.likes + 1)
+})
+
+test('adding blog fails without token', async () => {
+  const newBlog = {
+    title: 'Unauthorized blog',
+    author: 'Hacker',
+    url: 'https://hack.com'
+  }
+
+  await api
+    .post('/api/blogs')
+    .send(newBlog)
+    .expect(401)
+})
+
+test('adding blog fails with invalid token', async () => {
+  const newBlog = {
+    title: 'Bad token blog',
+    author: 'Hacker',
+    url: 'https://hack.com'
+  }
+
+  await api
+    .post('/api/blogs')
+    .set('Authorization', 'Bearer invalidtoken123')
+    .send(newBlog)
+    .expect(401)
 })
