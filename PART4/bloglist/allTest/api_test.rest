@@ -48,3 +48,36 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImVzd
   "url": "http://example.com/my-one-blog",
   "likes": 0
 }
+
+#########
+
+POST http://localhost:3001/api/users
+Content-Type: application/json
+
+{
+  "username": "augistin",
+  "name": "Boy",
+  "password": "secret123"
+}
+
+###
+
+POST http://localhost:3001/api/login
+Content-Type: application/json
+
+{
+  "username": "augistin",
+  "password": "secret123"
+}
+
+#####
+POST http://localhost:3001/api/blogs
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImF1Z2lzdGluIiwiaWQiOiI2YTU2ZmY4ODhmZjg2NjZmMzVlODFkYmEiLCJpYXQiOjE3ODQwODY3ODMsImV4cCI6MTc4NDA5MDM4M30.fXTE0iy8xINd8HJAEGrtselPiDxiyv2zh0yBlJvU1tY
+
+{
+  "title": "My First Blog, Baby boy wa Baba",
+  "author": "Boy",
+  "url": "https://nguvuteach.org/blog1",
+  "likes": 0
+}

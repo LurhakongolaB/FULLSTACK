@@ -24,7 +24,6 @@ mongoose
 
 // middleware (IMPORTANT ORDER)
 app.use(express.json())
-app.use(middleware.tokenExtractor)
 app.use(express.static('dist'))
 app.use(middleware.requestLogger)
 
