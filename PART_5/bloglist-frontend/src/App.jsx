@@ -45,6 +45,28 @@ const App = () => {
     }, 5000)
   }
 
+  const updateLikes = async (blog) => {
+  const changedBlog = {
+    ...blog,
+    likes: blog.likes + 1,
+    user: blog.user.id
+  }
+
+  try {
+    const returnedBlog = await blogService.update(
+      blog.id,
+      changedBlog
+    )
+
+    setBlogs(
+      blogs.map(b =>
+        b.id === blog.id ? returnedBlog : b
+      )
+    )
+  } catch (exception) {
+    showNotification('Error updating likes', 'error')
+  }
+}
   const handleLogin = async (event) => {
     event.preventDefault()
 
@@ -145,14 +167,15 @@ const App = () => {
       <Togglable buttonLabel="new blog">
 
   <BlogForm addBlog={addBlog} />
-  
+
   </Togglable>
       {blogs.map(blog => (
-        <Blog
-          key={blog.id}
-          blog={blog}
-        />
-      ))}
+  <Blog
+    key={blog.id}
+    blog={blog}
+    updateLikes={updateLikes}
+  />
+))}
     </div>
   )
 }
