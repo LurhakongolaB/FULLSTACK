@@ -4,6 +4,8 @@ import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
 import blogService from './services/blogs'
 import loginService from './services/login'
+import Togglable from './components/Togglable'
+import BlogForm from './components/BlogForm'
 
 const App = () => {
   const [blogs, setBlogs] = useState([])
@@ -144,36 +146,17 @@ const App = () => {
 
       <h3>Create new blog</h3>
 
-      <form onSubmit={addBlog}>
-        <div>
-          title:
-          <input
-            value={title}
-            onChange={({ target }) => setTitle(target.value)}
-          />
-        </div>
+      <Togglable buttonLabel="new blog">
 
-        <div>
-          author:
-          <input
-            value={author}
-            onChange={({ target }) => setAuthor(target.value)}
-          />
-        </div>
-
-        <div>
-          url:
-          <input
-            value={url}
-            onChange={({ target }) => setUrl(target.value)}
-          />
-        </div>
-
-        <button type="submit">
-          create
-        </button>
-      </form>
-
+  <BlogForm addBlog={addBlog}
+    title={title}
+    author={author}
+    url={url}
+    setTitle={setTitle}
+    setAuthor={setAuthor}
+    setUrl={setUrl}
+  />
+  </Togglable>
       {blogs.map(blog => (
         <Blog
           key={blog.id}
