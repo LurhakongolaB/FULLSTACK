@@ -13,10 +13,6 @@ const App = () => {
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
 
-  const [title, setTitle] = useState('')
-  const [author, setAuthor] = useState('')
-  const [url, setUrl] = useState('')
-
   const [notification, setNotification] = useState(null)
 
   // Load blogs
@@ -148,14 +144,8 @@ const App = () => {
 
       <Togglable buttonLabel="new blog">
 
-  <BlogForm addBlog={addBlog}
-    title={title}
-    author={author}
-    url={url}
-    setTitle={setTitle}
-    setAuthor={setAuthor}
-    setUrl={setUrl}
-  />
+  <BlogForm addBlog={addBlog} />
+  
   </Togglable>
       {blogs.map(blog => (
         <Blog
